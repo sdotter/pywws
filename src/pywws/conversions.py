@@ -32,7 +32,13 @@ import math
 import pywws.localisation
 import pywws.process
 
-
+def is_float(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
+  
 def scale(value, factor):
     """Multiply value by factor, allowing for None values."""
     if value is None:
@@ -49,7 +55,11 @@ def illuminance_wm2(lux):
     return scale(lux, 0.005)
 
 def wm2_illuminance(wm2):
-    """Approximate conversion of solar radiation in W/m2 to illuminance in lux"""
+    """Approximate conversion of solar radiation in W/m2 to mean illuminance in lux"""
+    # check if wm2 is iterable
+    if isinstance(wm2, (list, tuple)) or hasattr(wm2, '__iter__'):
+        wm2 = sum(float(i) for i in wm2 if is_float(i))/len(wm2)
+        
     return scale(wm2, 1 / 0.005)
 
 def mph_to_kph(mph):
